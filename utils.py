@@ -82,7 +82,8 @@ def getLastState():
     print(data)
     response = requests.post(url = api_endpoint, data = data)  
     pastebin_url = response.text 
-    print("[GetLastState action] Reponse is: {0}".format(pastebin_url)) 
+    # print("[GetLastState action] Reponse is: {0}".format(pastebin_url)) 
+    return pastebin_url
 
 # this function returns all the records collected by SH_middleware since it has been activated
 def getAllRecordsCollected():

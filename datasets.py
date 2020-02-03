@@ -57,4 +57,4 @@ def find_max_diff(intervals):
 if __name__ == '__main__':
     # find_max_diff(intervals=3)
     dataset_address = os.path.join(settings.PROJECT_ROOT_ADDRESS, 'data/mi_meteo_2001.csv')
-    convert_dataset_to_scale_home_temps(dataset_address, 22, 29)
+    convert_dataset_to_scale_home_temps(dataset_address, 22, 50)
