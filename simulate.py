@@ -1,1 +1,19 @@
-import requests
+import os
+
+import simulations
+import datasets
+import settings
+
+if __name__ == '__main__':
+    dataset_address = os.path.join(settings.PROJECT_ROOT_ADDRESS, 'data/mi_meteo_2001.csv')
+
+    steps_per_day = 8
+    intervals = 24 // steps_per_day
+
+    ds = datasets.convert_dataset_to_scale_home_temps(dataset_address, 23, 34, intervals=intervals)
+
+    dict_of_days_temperatures = datasets.unzipAndCreateListOfLists(ds,steps_per_day)
+
+    for day,temperatures in dict_of_days_temperatures.items():
+        print("Day {0} - temperatures: {1}".format(day,temperatures))
+        simulations.simulateFromList(temperatures, settings.SIMULATION_INTERVAL)

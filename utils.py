@@ -79,7 +79,7 @@ def getLastState():
             "type": "request",
             "value": "last record"
         }
-    print(data)
+    # print(data)
     response = requests.post(url = api_endpoint, data = data)  
     pastebin_url = response.text 
     # print("[GetLastState action] Reponse is: {0}".format(pastebin_url)) 

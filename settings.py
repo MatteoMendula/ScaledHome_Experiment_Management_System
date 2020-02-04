@@ -14,3 +14,6 @@ API_ENDPOINT = "http://localhost:3000/pythonAPI"
 API_KEY = "scaledHomeUcf"
 
 HYSTERESIS_VALUE = 1
+
+# in seconds (eg 20min*60 = 1200)
+SIMULATION_INTERVAL = 1200 

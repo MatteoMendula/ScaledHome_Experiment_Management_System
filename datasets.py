@@ -66,10 +66,37 @@ def find_max_diff(intervals):
     print('min')
     print(diff_data.min())
 
+def unzipAndCreateListOfLists(ds, steps_per_day):
+    counter = 0
+    list_of_days = []
+    day_temperatures = []
+    dict_of_days = {}
+    for time_step, temp in ds:
+        counter += 1
+        # print(f'{time_step}: {temp}')
+        day_temperatures.append(temp)
+        if counter == steps_per_day:
+            counter = 0
+            # print()
+            dict_of_days[str(time_step)] = day_temperatures
+            day_temperatures = []
+    return dict_of_days
 
 if __name__ == '__main__':
     # find_max_diff(intervals=3)
     dataset_address = os.path.join(settings.PROJECT_ROOT_ADDRESS, 'data/mi_meteo_2001.csv')
-    ds = convert_dataset_to_scale_home_temps(dataset_address, 23, 34)
-    for time_step, temp in ds:
-        print(f'{time_step}: {temp}')
+
+    steps_per_day = 8
+    intervals = 24 // steps_per_day
+
+    ds = convert_dataset_to_scale_home_temps(dataset_address, 23, 34, intervals=intervals)
+
+    # time, temp = zip(*ds)
+
+    # print(time)
+    # print("----------------------------------------")
+    # print(temp)
+
+    dict_of_days_temperatures = unzipAndCreateListOfLists(ds,steps_per_day)
+
+    print(dict_of_days_temperatures)
