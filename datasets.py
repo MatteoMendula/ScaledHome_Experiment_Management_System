@@ -21,7 +21,8 @@ def read_dataset_from_csv(dataset_address, intervals):
     return df
 
 
-def convert_dataset_to_scale_home_temps(dataset_address, min_temp_home, max_temp_home, intervals=3):
+def convert_dataset_to_scale_home_temps(dataset_address, min_temp_home, max_temp_home, desired_temp=25, intervals=3):
+    """All temperatures are based on celsius"""
     df = read_dataset_from_csv(dataset_address, intervals=intervals)
     pd.set_option('display.max_rows', None)
 
@@ -35,6 +36,9 @@ def convert_dataset_to_scale_home_temps(dataset_address, min_temp_home, max_temp
     )
 
     def convert(x):
+        # x[1] is the min of the day and x[2] is the max of the day.
+        x[1] = min(x[1], desired_temp)
+        x[2] = max(x[2], desired_temp)
         a = (max_temp_home - min_temp_home) / (x[2] - x[1])
         b = min_temp_home - a * x[1]
         return a * x + b
