@@ -16,4 +16,5 @@ API_KEY = "scaledHomeUcf"
 HYSTERESIS_VALUE = 1
 
 # in seconds (eg 20min*60 = 1200)
-SIMULATION_INTERVAL = 1200 
+# (7min*60 = 420)
+SIMULATION_INTERVAL = 420
