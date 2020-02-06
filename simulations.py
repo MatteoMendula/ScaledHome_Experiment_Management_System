@@ -97,6 +97,7 @@ actuators_switcher = {
 }
 
 def runRandomActions(random_actions):
+    print("Running new actions ",random_actions)
     for index, state in enumerate(generateRandomActuatorsActions(random_actions)):
         handleActuator = actuators_switcher.get(index, lambda: "Invalid month")
         handleActuator(state)
