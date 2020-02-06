@@ -62,7 +62,7 @@ def handleHeater(state):
 # id: identifier of a specific motor -> id E [0-6,8-15]U{"all"} where [0,6] are windows and [8-15] are doors 
 def handleMotor(state, id):
     # value = "heater on" if state==1 else "heater off"
-    value = ("open " if state==1 else "close ") + id
+    value = ("open" if state==1 else "close") + " motor " + str(id)
     data = {    
         "key": api_key, 
         "type": "cmd",
