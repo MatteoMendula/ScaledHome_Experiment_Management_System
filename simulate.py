@@ -6,4 +6,4 @@ import settings
 
 if __name__ == '__main__':
     # simulations.simulateRealDataTemperatures()
-    simulations.performRandomActionsFixedDuration(3600*6, 60)
+    simulations.performRandomActionsFixedDuration(3600*2, 60)

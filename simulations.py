@@ -55,7 +55,7 @@ def simulateFromList(temperatures_list, interval):
             seconds += 1    
         index += 1
 
-def simulateRealDataTemperatures():
+def simulateRealDataTemperatures(n_frames):
     dataset_address = os.path.join(settings.PROJECT_ROOT_ADDRESS, 'data/mi_meteo_2001.csv')
 
     steps_per_day = 8
@@ -69,7 +69,21 @@ def simulateRealDataTemperatures():
 
     for day,temperatures in dict_of_days_temperatures.items():
         print("Day {0} - temperatures: {1}".format(day,temperatures))
-        simulateFromList(temperatures, settings.SIMULATION_INTERVAL)
+        # print("After insert",insertTemperaturesInsideTemperaturesList(temperatures, 3))
+        simulateFromList(insertTemperaturesInsideTemperaturesList(temperatures, n_frames), settings.SIMULATION_INTERVAL/n_frames)
+
+def insertTemperaturesInsideTemperaturesList(temperatures_list, n_frames):
+    temperatures_with_new_values = list()
+    for index in range(len(temperatures_list)-1):
+        actual_temp = temperatures_list[index]
+        temperatures_with_new_values.append(actual_temp)
+        if (index < len(temperatures_list)):
+            next_temp = temperatures_list[index+1]
+            frame = (next_temp-actual_temp)/n_frames
+            for j in range(1, n_frames+1):
+                temperatures_with_new_values.append(round(actual_temp+j*frame))
+    return temperatures_with_new_values
+
 
 def generateRandomActuatorsActions(n_actuators):
     return np.random.randint(2, size=n_actuators)
@@ -116,4 +130,5 @@ def performRandomActionsFixedDuration(simulation_duration, interval):
 
 if __name__ == '__main__':
     # runRandomActions(19)
-    performRandomActionsNtimes(3,10)
+    # performRandomActionsNtimes(3,10)
+    simulateRealDataTemperatures(3)
