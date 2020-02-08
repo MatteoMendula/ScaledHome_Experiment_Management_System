@@ -30,19 +30,25 @@ def readFileFromCSVtoDictionary(path_to_file, file_name, cols_to_drop=[]):
         dictionary[key] = list(df[key])
     return dictionary
 
-def createPairs(path_to_file, file_name, col1, col2):
+def createListsPairs(path_to_file, file_name, col_list1, col_list2):
     out_list = list()
     dictionary = readFileFromCSVtoDictionary(path_to_file, file_name)
     # print(len(dictionary.items()))
     # print(len(dictionary[col1]))
-    for index in range(len(dictionary[col1])):
-        out_list.append((dictionary[col1][index], dictionary[col2][index]))
+    for index in range(len(dictionary[col_list1[0]])):
+        list1 = list()
+        list2 = list()
+        for col1 in col_list1:
+            list1.append(dictionary[col1][index])
+        for col2 in col_list2:
+            list2.append(dictionary[col2][index])
+        out_list.append((list1, list2))
     return out_list
 
 if __name__ == '__main__':
     # cols_to_drop = ["TIME"]
     # np_array = readFileFromCSVtoNpArray(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
     # dictionary = readFileFromCSVtoDictionary(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
-    list_of_pairs = createPairs(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv", "TIME", "AC_STATE")
+    list_of_pairs = createListsPairs(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv", ["TIME","OUT_T[*C]"], ["AC_STATE"])
     print(list_of_pairs[:10])
     # print(np_array)
