@@ -1,22 +1,29 @@
-from _curses import KEY_NEXT
+# from _curses import KEY_NEXT
 import os
+import sys
 
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error
 
+sys.path.append('../../')
 from dataset_utils import create_lists_pairs
 import settings
 
 
 class KNNConfig(object):
-    def __init__(self, n_neighbor, dataset_uri, feature_cols, target_cols, prediction_index, random_seed=-1):
+    def __init__(self, n_neighbors, dataset_uri, feature_cols, target_cols, prediction_index, random_seed=-1):
         if random_seed != -1:
             self.random_seed = random_seed
 
+        self.n_neighbors = n_neighbors
+        self.feature_cols = feature_cols
+        self.target_cols = target_cols
+        self.prediction_index = prediction_index
+
         self.model = KNeighborsRegressor(
-            n_neighbors=n_neighbor
+            n_neighbors=n_neighbors
         )
         x, y = create_lists_pairs(dataset_uri, feature_cols, target_cols, prediction_index, as_numpy=True)
         x_train, self.x_test, y_train, self.y_test = train_test_split(x, y, test_size=0.2, shuffle=False)
@@ -47,6 +54,14 @@ class KNNConfig(object):
 
         y_hat = self.model.predict(x)
         return mean_squared_error(y, y_hat, multioutput='raw_values')
+
+    def get_hyperparameters(self):
+        return {
+            'n_neighbors': self.n_neighbors,
+            'feature_cols': self.feature_cols,
+            'target_cols': self.target_cols,
+            'prediction_index': self.prediction_index
+        }
 
 
 if __name__ == '__main__':
