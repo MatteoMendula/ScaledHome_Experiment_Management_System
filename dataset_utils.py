@@ -36,8 +36,12 @@ def read_file_from_csv_to_dictionary(file_uri, cols_to_drop=None):
 def create_lists_pairs(file_uri, col_list1, col_list2, prediction_index=0, as_numpy=False):
     out_list = list()
     dictionary = read_file_from_csv_to_dictionary(file_uri)
-    # print(len(dictionary.items()))
-    # print(len(dictionary[col1]))
+
+    # print(prediction_index)
+    # print('--------------')
+    # print(col_list1)
+    # print('--------------')
+
     for index in range(len(dictionary[col_list1[0]]) - prediction_index):
         list1 = list()
         list2 = list()
