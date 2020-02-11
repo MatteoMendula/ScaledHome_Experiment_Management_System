@@ -9,90 +9,20 @@ from sklearn.neighbors import KNeighborsRegressor
 
 sys.path.append('../../')
 sys.path.append('../')
-from dataset_utils import create_lists_pairs
-import model_utilities
+from models.general_model import GeneralModel
 
-class KNNConfig(object):
-    def __init__(self, n_neighbors, dataset_uri, feature_cols, target_cols, prediction_index, random_seed=-1):
-        if random_seed != -1:
-            self.random_seed = random_seed
 
-        # print(n_neighbors,dataset_uri)
-        # print()
-        # print(dataset_uri, feature_cols, target_cols, prediction_index)
-
+class KNNConfig(GeneralModel):
+    def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index, n_neighbors):
+        super(KNNConfig, self).__init__(dataset_uri, feature_cols, target_cols, prediction_index)
         self.n_neighbors = n_neighbors
-        self.feature_cols = feature_cols
-        self.target_cols = target_cols
-        self.prediction_index = prediction_index
+        self.model = KNeighborsRegressor(n_neighbors=self.n_neighbors)
 
-        self.model = KNeighborsRegressor(
-            n_neighbors=n_neighbors
-        )
-        # x, y = create_lists_pairs(dataset_uri, feature_cols, target_cols, prediction_index, as_numpy=True)
-        # x_train, self.x_test, y_train, self.y_test = train_test_split(x, y, test_size=0.2, shuffle=False)
-        # self.x_train, self.x_val, self.y_train, self.y_val = train_test_split(
-        #     x_train,
-        #     y_train,
-        #     test_size=0.125,
-        #     shuffle=False
-        # )
-        self.x_train, self.x_val, self.x_test, self.y_train, self.y_val, self.y_test = model_utilities.split_dataset_train_val_test(dataset_uri, feature_cols, target_cols, prediction_index)
-        # self.scaler = StandardScaler()
-        # self.scaler.fit(self.x_train)
-        # self.x_train = self.scaler.transform(self.x_train)
-        # self.x_val = self.scaler.transform(self.x_val)
-        # self.x_test = self.scaler.transform(self.x_test)
-        self.x_train, self.x_val, self.x_test = model_utilities.scale(self.x_train, self.x_val, self.x_test)
+    def train_on(self, x, y):
+        self.model.fit(x, y)
 
-        self.data_set_parts = {
-            'train': {
-                'x': self.x_train,
-                'y': self.y_train
-            },
-            'val': {
-                'x': self.x_val,
-                'y': self.y_val
-            },
-            'test': {
-                'x': self.x_test,
-                'y': self.y_test
-            }
-        }
-
-    # def train(self):
-    #     self.model.fit(self.x_train, self.y_train)
-
-    def train(self):
-        model_utilities.train_model(self.model, self.x_train, self.y_train)
-
-    # def evaluate(self, dataset_part='test'):
-    #     if dataset_part == 'train':
-    #         x, y = self.x_train, self.y_train
-    #     elif dataset_part == 'val':
-    #         x, y = self.x_val, self.y_val
-    #     elif dataset_part == 'test':
-    #         x, y = self.x_test, self.y_test
-    #     else:
-    #         raise Exception('The dataset part should be train, val or test.')
-
-    #     y_hat = self.model.predict(x)
-    #     return mean_squared_error(y, y_hat, multioutput='raw_values')
-
-
-    def evaluate(self, dataset_part='test'):
-        return model_utilities.evaluate(self.model, self.data_set_parts, dataset_part)
-
-    # def get_hyperparameters(self):
-    #     return {
-    #         'n_neighbors': self.n_neighbors,
-    #         'feature_cols': self.feature_cols,
-    #         'target_cols': self.target_cols,
-    #         'prediction_index': self.prediction_index
-    #     }
-
-    def get_hyperparameters(self):
-        return model_utilities.get_hyperparameters(self)
+    def predict(self, x):
+        return self.model.predict(x)
 
 
 if __name__ == '__main__':

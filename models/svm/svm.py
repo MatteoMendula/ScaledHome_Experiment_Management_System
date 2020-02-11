@@ -1,63 +1,39 @@
 import os
 import sys
 
+import numpy as np
 from sklearn import svm
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error
 
+from models.general_model import GeneralModel
+
 sys.path.append('../../')
 sys.path.append('../')
 # print(sys.path)
 from dataset_utils import create_lists_pairs
-import model_utilities
 
 
-class SVMConfig(object):
+class SVRConfig(GeneralModel):
     def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index):
-        self.model = svm.SVR()
+        super(SVRConfig, self).__init__(dataset_uri, feature_cols, target_cols, prediction_index)
 
-        self.feature_cols = feature_cols
-        self.target_cols = target_cols
-        self.prediction_index = prediction_index
+        self.models = [svm.SVR() for i in range(len(target_cols))]
 
-        self.x_train, self.x_val, self.x_test, self.y_train, self.y_val, self.y_test = model_utilities.split_dataset_train_val_test(dataset_uri, feature_cols, target_cols, prediction_index)
-        self.x_train, self.x_val, self.x_test = model_utilities.scale(self.x_train, self.x_val, self.x_test)
-        self.data_set_parts = {
-            'train': {
-                'x': self.x_train,
-                'y': self.y_train
-            },
-            'val': {
-                'x': self.x_val,
-                'y': self.y_val
-            },
-            'test': {
-                'x': self.x_test,
-                'y': self.y_test
-            }
-        }
+    def train_on(self, x, y):
+        for i in range(len(self.target_cols)):
+            self.models[i].fit(x, y[:, i])
 
-    def train(self):
-        model_utilities.train_model(self.model, self.x_train, self.y_train)
+    def predict(self, x):
+        y_hat = np.zeros(shape=(x.shape[0], len(self.target_cols)))
+        for i in range(len(self.target_cols)):
+            y_hat[:, i] = self.models[i].predict(x)
 
-    def evaluate(self, dataset_part='test'):
-        return model_utilities.evaluate(self.model, self.data_set_parts, dataset_part)
+        return y_hat
 
-    def get_hyperparameters(self):
-        return model_utilities.get_hyperparameters(self)
 
 if __name__ == '__main__':
-    X = [[0, 0], [2, 2]]
-    y = [0.5, 2.5]
-    clf = svm.SVR()
-    clf.fit(X, y)
-
-    res = clf.predict([[1, 1]])
-    print(res)
-
-    print('-------------------------')
-
     import settings
     dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
     feature_cols = [
@@ -102,7 +78,7 @@ if __name__ == '__main__':
     target_cols = ["T6[*C]", "T12[*C]", "T18[*C]", "T19[*C]", "T24[*C]", "T25[*C]", "T26[*C]"]
     prediction_index = 8
 
-    svn_config = SVMConfig(
+    svn_config = SVRConfig(
         dataset_uri=dataset_uri,
         feature_cols=feature_cols,
         target_cols=target_cols,
