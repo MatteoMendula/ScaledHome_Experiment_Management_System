@@ -7,10 +7,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error
 
-from models.general_model import GeneralModel
 
 sys.path.append('../../')
 sys.path.append('../')
+
+from models.general_model import GeneralModel
+
 # print(sys.path)
 from dataset_utils import create_lists_pairs
 

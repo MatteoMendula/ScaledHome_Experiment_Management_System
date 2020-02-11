@@ -2,7 +2,7 @@ import sys
 import os
 import itertools
 
-
+sys.path.append('../')
 import settings
 
 
