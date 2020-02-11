@@ -83,3 +83,13 @@ class GeneralModel(object):
                     and not (a[0].startswith('x'))
                     and not (a[0].startswith('y'))
                     )
+
+    def simulate_on_home(self):
+        #  TODO
+        # 0- Loop over these for t seconds
+        # 1- Get the state of the house
+        # 2- Decide on what to do: If current temp < desired temp -> turn on the heater and vice versa for AC.
+        # 3- Send the decision to the house
+        # 4- After t seconds, return the amount of time that heater and AC were on and difference between desired temp
+        # and achieved temp at every timestep we collected data.
+        pass
