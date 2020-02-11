@@ -23,8 +23,8 @@ class HyperParameterSearcher(object):
         if self.best['model'] is None or sum(self.best['error']) > sum(val_error):
             self.best['model'] = knn_config
             self.best['error'] = val_error
-            print('Best hyperparameters updated')
-            print(self.best,'\n')
+            # print('Best hyperparameters updated')
+            # print(self.best,'\n')
 
     def create_config_conbinations_as_list_of_dicts(self):
         parameters = self.config.keys()
@@ -44,7 +44,8 @@ class HyperParameterSearcher(object):
             for k in parameters:
                 d[k] = p[index]
                 index += 1
-            ld.append(d) 
+            ld.append(d)
+
         return ld
 
     # '''
@@ -75,15 +76,14 @@ def search_knn():
     # HyperParameterSearcher(KNNConfig, )
     dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
 
-    n_neighbors = [3, 5]
+    n_neighbors = [3, 11, 21]
     feature_cols = [
-        ["OUT_T[*C]", "T6[*C]"],
-        ["OUT_T[*C]", "T12[*C]"],
+        settings.INPUT_FEATURE_NAMES
     ]
     target_cols = [
-        ["T12[*C]", "T18[*C]"]
+        settings.TARGET_FEATURE_NAMES
     ]
-    prediction_index = [8, 12]
+    prediction_index = [6]
 
     common_config = {
         'dataset_uri': dataset_uri,
@@ -101,6 +101,8 @@ def search_knn():
 
     print()
     print(bests['model'].get_hyperparameters())
+    print(bests['model'].evaluate(dataset_part='test'))
+
     bests['model'].train(include_val=True)
     print(bests['model'].evaluate(dataset_part='test'))
 
@@ -109,13 +111,12 @@ def search_svr():
     from models.svm.svm import SVRConfig
     dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
     feature_cols = [
-        ["OUT_T[*C]", "T6[*C]"],
-        ["OUT_T[*C]", "T12[*C]"],
+        settings.INPUT_FEATURE_NAMES
     ]
     target_cols = [
-        ["T12[*C]", "T18[*C]"]
+        settings.TARGET_FEATURE_NAMES
     ]
-    prediction_index = [8, 12]
+    prediction_index = [6]
 
     common_config = {
         'dataset_uri': dataset_uri,
@@ -132,6 +133,9 @@ def search_svr():
 
     print()
     print(bests['model'].get_hyperparameters())
+
+    print(bests['model'].evaluate(dataset_part='test'))
+
     bests['model'].train(include_val=True)
     print(bests['model'].evaluate(dataset_part='test'))
 
