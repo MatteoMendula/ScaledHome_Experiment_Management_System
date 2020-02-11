@@ -64,6 +64,7 @@ class KNNConfig(object):
         }
 
 
+
 if __name__ == '__main__':
     dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
     feature_cols = [
@@ -109,7 +110,7 @@ if __name__ == '__main__':
     prediction_index = 8
 
     knn_config = KNNConfig(
-        n_neighbor=3,
+        n_neighbors=3,
         dataset_uri=dataset_uri,
         feature_cols=feature_cols,
         target_cols=target_cols,
