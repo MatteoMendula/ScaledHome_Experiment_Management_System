@@ -50,19 +50,19 @@ class HyperParameterSearcher(object):
 
     # '''
     def search(self, mode='only best'):
-        list_of_dicts = self.create_config_conbinations_as_list_of_dicts()
-        for config_i in list_of_dicts:
-            knn_config = self.algorithm_class(
+        configurations = self.create_config_conbinations_as_list_of_dicts()
+        for config_i in configurations:
+            model_config = self.algorithm_class(
                 **config_i
             )
-            knn_config.train()
-            # train_error = knn_config.evaluate(dataset_part='train')
-            val_error = knn_config.evaluate(dataset_part='val')
+            model_config.train()
+            # train_error = model_config.evaluate(dataset_part='train')
+            val_error = model_config.evaluate(dataset_part='val')
             # print(config_i, val_error)
-            # test_error = knn_config.evaluate(dataset_part='test')
+            # test_error = model_config.evaluate(dataset_part='test')
 
             if (mode == 'only best'):
-                self.update_bests(val_error, knn_config)
+                self.update_bests(val_error, model_config)
             elif (mode == 'all models'):
                 pass
     # '''
