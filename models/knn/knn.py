@@ -21,9 +21,16 @@ class KNNConfig(GeneralModel):
     def train_on(self, x, y):
         self.model.fit(x, y)
 
-    def predict(self, x):
+    def predict_on(self, x):
         return self.model.predict(x)
 
+    def get_restoring_path(self):
+        dir_name = os.path.dirname(__file__)
+        return os.path.join(
+            dir_name,
+            'saved_models',
+            f'KNNConfig_k{self.n_neighbors}'
+        )
 
 if __name__ == '__main__':
     import settings

@@ -1,6 +1,8 @@
+import os
 import sys
 import inspect
 from abc import abstractmethod
+import pickle
 
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -19,6 +21,7 @@ class GeneralModel(object):
         self.x_train, self.x_val, self.x_test, self.y_train, self.y_val, self.y_test = \
             self.split_dataset_train_val_test(dataset_uri, feature_cols, target_cols, prediction_index)
 
+        self.scaler = StandardScaler()
         self.x_train, self.x_val, self.x_test = self.scale(self.x_train, self.x_val, self.x_test)
 
         self.data_set_parts = {
@@ -47,8 +50,18 @@ class GeneralModel(object):
     def train_on(self, x, y):
         pass
 
+    def predict(self, x, scale=False):
+        if scale:
+            x = self.scaler.transform(x)
+
+        return self.predict_on(x)
+
     @abstractmethod
-    def predict(self, x):
+    def predict_on(self, x):
+        pass
+
+    @abstractmethod
+    def get_restoring_path(self):
         pass
 
     def split_dataset_train_val_test(self, dataset_uri, feature_cols, target_cols, prediction_index):
@@ -63,11 +76,10 @@ class GeneralModel(object):
         return x_train, x_val, x_test, y_train, y_val, y_test
 
     def scale(self, train, val, test):
-        scaler = StandardScaler()
-        scaler.fit(train)
-        train = scaler.transform(train)
-        val = scaler.transform(val)
-        test = scaler.transform(test)
+        self.scaler.fit(train)
+        train = self.scaler.transform(train)
+        val = self.scaler.transform(val)
+        test = self.scaler.transform(test)
         return train, val, test
 
     def evaluate(self, dataset_part):
@@ -84,12 +96,16 @@ class GeneralModel(object):
                     and not (a[0].startswith('y'))
                     )
 
-    def simulate_on_home(self):
-        #  TODO
-        # 0- Loop over these for t seconds
-        # 1- Get the state of the house
-        # 2- Decide on what to do: If current temp < desired temp -> turn on the heater and vice versa for AC.
-        # 3- Send the decision to the house
-        # 4- After t seconds, return the amount of time that heater and AC were on and difference between desired temp
-        # and achieved temp at every timestep we collected data.
-        pass
+    def save(self):
+        if not os.path.exists(self.get_restoring_path()):
+            os.makedirs(os.path.dirname(self.get_restoring_path()))
+        file_handler = open(self.get_restoring_path(), 'wb')
+        pickle.dump(self, file_handler)
+
+    def load_latest(self):
+        return GeneralModel.load(restore_path=self.get_restoring_path())
+
+    @staticmethod
+    def load(restore_path):
+        file_handler = open(restore_path, 'rb')
+        return pickle.load(file_handler)

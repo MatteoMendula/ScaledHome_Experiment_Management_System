@@ -27,11 +27,19 @@ class SVRConfig(GeneralModel):
         for i in range(len(self.target_cols)):
             self.models[i].fit(x, y[:, i])
 
-    def predict(self, x):
+    def predict_on(self, x):
         y_hat = np.zeros(shape=(x.shape[0], len(self.target_cols)))
         for i in range(len(self.target_cols)):
             y_hat[:, i] = self.models[i].predict(x)
         return y_hat
+
+    def get_restoring_path(self):
+        dir_name = os.path.dirname(__file__)
+        return os.path.join(
+            dir_name,
+            'saved_models',
+            f'SVRConfig'
+        )
 
 
 if __name__ == '__main__':

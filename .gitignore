@@ -3,3 +3,4 @@
 data/*
 venv/*
 my_settings.py
+*saved_models*

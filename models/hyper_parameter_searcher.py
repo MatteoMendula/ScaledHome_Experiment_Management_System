@@ -106,6 +106,12 @@ def search_knn():
     bests['model'].train(include_val=True)
     print(bests['model'].evaluate(dataset_part='test'))
 
+    bests['model'].save()
+
+    path = bests['model'].get_restoring_path()
+    knn_config = KNNConfig.load(path)
+    print(knn_config.evaluate(dataset_part='test'))
+
 
 def search_svr():
     from models.svm.svm import SVRConfig
@@ -142,6 +148,6 @@ def search_svr():
 
 if __name__ == '__main__':
     search_knn()
-    search_svr()
+    # search_svr()
 
 
