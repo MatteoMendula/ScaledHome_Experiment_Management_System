@@ -7,5 +7,5 @@ sys.path.insert(0, parent_dir)
 import settings
 
 if __name__ == '__main__':
-    # simulations.simulateRealDataTemperatures()
-    simulations.performRandomActionsFixedDuration(3600*2, 60)
+    simulations.simulateRealDataTemperatures(3)
+    # simulations.performRandomActionsFixedDuration(3600*2, 60)
