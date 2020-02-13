@@ -1,5 +1,6 @@
 import planner_utils
-
+from datetime import datetime, timedelta
+import time
 
 #  TODO
 # 0- Loop over these for t seconds
@@ -10,56 +11,66 @@ import planner_utils
 # and achieved temp at every timestep we collected data.
 
 class PolicyManager(object):
-    def __init__(self, model_as_file_location, policy):
-        self.model_as_file_location = model_as_file_location
+    #def __init__(self, model_as_file_location, policy):
+    def __init__(self):
+        #self.model_as_file_location = model_as_file_location
         self.sh_state = planner_utils.get_sh_initial_state()
-        self.policy = policy
-
-        ''' 
-        # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            EG POLICY
-            {
-                mode: keep_temperature_still,
-                target: 27 celsius degree,
-                duration: 10 min
-            }
-        # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        # '''
+        self.target = 22
 
 
     def update_sh_last_state(self):
         self.sh_state = planner_utils.get_last_state()
 
+    # state = 0 -> turn off
+    # state = 1 -> turn on
+    # actuators= [fan, heater, ac, lamp]
+    def handle_actuators(self, actuator_id, next_state):
+        if 'motor' in actuator_id and self.sh_state['motors'][actuator_id] != next_state:
+            planner_utils.handle_motor(next_state, actuator_id.split('motor')[1])
+            self.sh_state['motors'][actuator_id] = next_state
+        else:
+            if actuator_id == 'lamp' and self.sh_state[actuator_id] != next_state:
+                planner_utils.handle_lamp(next_state)
+            elif actuator_id == 'fan' and self.sh_state[actuator_id] != next_state:
+                planner_utils.handle_fan(next_state)
+            elif actuator_id == 'ac' and self.sh_state[actuator_id] != next_state:
+                planner_utils.handle_ac(next_state)
+            elif actuator_id == 'heater' and self.sh_state[actuator_id] != next_state:
+                planner_utils.handle_heater(next_state)
+            self.sh_state[actuator_id] = next_state
 
-    ''' 
-    # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    actions should be [0,1]
-    keys have to be ['fan', 'heater', 'lamp', 'ac', 'motorX']
-    eg 
-    {
-        'fan': 1
-        'motor11':0
-    }
-    # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    # ''' 
-    def perform_actions_by_dictionary(self, actions_dictionary):
-        for action_key in actions_dictionary:
-            action = actions_dictionary[action_key]
-            if 'lamp' in action_key:
-                planner_utils.handle_lamp(action)
-            elif 'ac' in action_key:
-                planner_utils.handle_ac(action)
-            elif 'heater' in action_key:
-                planner_utils.handle_heater(action)
-            elif 'fan' in action_key:
-                planner_utils.handle_fan(action)
-            elif 'motor' in action_key:
-                planner_utils.handle_motor(action, action_key.plit('motor')[1])
 
-    def run(self):
-        if self.policy['mode'] == 'keep_temperature_still':
-            # 0. load the model
-            # 1. read sh state
-            # 2. create new dictionary of actions
-            # 3. perform dictionary of actions with perform_actions_by_dictionary
-            # 4. if simulation time < self.policy['duration'] go to 1 
+    def run(self, min_duration):
+        sleep_time = 1  # seconds
+        begin_time = datetime.now()
+        ac_energy_consumption = 0
+        heater_energy_consumption = 0
+        planner_utils.handle_ac(0)
+        planner_utils.handle_heater(0)
+        while True:
+            current_time = datetime.now()
+            if current_time - begin_time > timedelta(minutes=min_duration):
+                break
+            self.update_sh_last_state()
+            if float(self.sh_state['sensors']['sensor_6']['temperature']) < self.target:
+                self.handle_actuators('motor15', 0)
+                self.handle_actuators('ac', 0)
+                self.handle_actuators('heater', 1)
+            else:
+                self.handle_actuators('motor15', 1)
+                self.handle_actuators('ac', 1)
+                self.handle_actuators('heater', 0)
+
+                
+            if self.sh_state['heater'] == 1:
+                heater_energy_consumption += sleep_time
+            if self.sh_state['ac'] == 1:
+                ac_energy_consumption += sleep_time
+
+            time.sleep(sleep_time)
+        print(ac_energy_consumption)
+        print(heater_energy_consumption)
+
+if __name__ == '__main__':
+    pm = PolicyManager()
+    pm.run(1)
