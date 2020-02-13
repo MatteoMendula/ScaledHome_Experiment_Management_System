@@ -19,8 +19,9 @@ class PolicyManager(object):
         # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             EG POLICY
             {
-                mode: keep temperature still
-                target: 27 celsius degree
+                mode: keep_temperature_still,
+                target: 27 celsius degree,
+                duration: 10 min
             }
         # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         # '''
@@ -54,3 +55,11 @@ class PolicyManager(object):
                 planner_utils.handle_fan(action)
             elif 'motor' in action_key:
                 planner_utils.handle_motor(action, action_key.plit('motor')[1])
+
+    def run(self):
+        if self.policy['mode'] == 'keep_temperature_still':
+            # 0. load the model
+            # 1. read sh state
+            # 2. create new dictionary of actions
+            # 3. perform dictionary of actions with perform_actions_by_dictionary
+            # 4. if simulation time < self.policy['duration'] go to 1 
