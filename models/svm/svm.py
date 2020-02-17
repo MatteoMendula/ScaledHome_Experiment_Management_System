@@ -3,25 +3,15 @@ import sys
 
 import numpy as np
 from sklearn import svm
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import mean_squared_error
 
-
-sys.path.append('../../')
 sys.path.append('../')
-
 from models.general_model import GeneralModel
-
-# print(sys.path)
-from dataset_utils import create_lists_pairs
-
 
 class SVRConfig(GeneralModel):
     def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index):
         super(SVRConfig, self).__init__(dataset_uri, feature_cols, target_cols, prediction_index)
 
-        self.models = [svm.SVR() for i in range(len(target_cols))]
+        self.models = [svm.SVR(gamma='auto') for i in range(len(target_cols))]
 
     def train_on(self, x, y):
         for i in range(len(self.target_cols)):

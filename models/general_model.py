@@ -9,7 +9,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error
 
-sys.path.append('../')
+#sys.path.append('../')
+sys.path.insert(0, "D:/Thesis draft/code/UCF_ML")
 from dataset_utils import create_lists_pairs
 
 

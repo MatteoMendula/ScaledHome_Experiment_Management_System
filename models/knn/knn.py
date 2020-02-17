@@ -1,13 +1,8 @@
-# from _curses import KEY_NEXT
 import os
 import sys
 
 from sklearn.neighbors import KNeighborsRegressor
-# from sklearn.model_selection import train_test_split
-# from sklearn.preprocessing import StandardScaler
-# from sklearn.metrics import mean_squared_error
 
-sys.path.append('../../')
 sys.path.append('../')
 from models.general_model import GeneralModel
 

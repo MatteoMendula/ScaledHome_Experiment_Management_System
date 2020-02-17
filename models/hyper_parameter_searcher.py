@@ -101,16 +101,16 @@ def search_knn():
 
     print()
     print(bests['model'].get_hyperparameters())
-    print(bests['model'].evaluate(dataset_part='test'))
+    print('[TEST error - without validation]',bests['model'].evaluate(dataset_part='test'))
 
     bests['model'].train(include_val=True)
-    print(bests['model'].evaluate(dataset_part='test'))
+    print('[TEST error - with validation]',bests['model'].evaluate(dataset_part='test'))
 
     bests['model'].save()
 
     path = bests['model'].get_restoring_path()
     knn_config = KNNConfig.load(path)
-    print(knn_config.evaluate(dataset_part='test'))
+    print('[TEST error - loaded model]',knn_config.evaluate(dataset_part='test'))
 
 
 def search_svr():
@@ -140,14 +140,65 @@ def search_svr():
     print()
     print(bests['model'].get_hyperparameters())
 
-    print(bests['model'].evaluate(dataset_part='test'))
+    print('[TEST error - without validation]', bests['model'].evaluate(dataset_part='test'))
 
     bests['model'].train(include_val=True)
-    print(bests['model'].evaluate(dataset_part='test'))
+    print('[TEST error - with validation]', bests['model'].evaluate(dataset_part='test'))
 
+    bests['model'].save()
+
+    path = bests['model'].get_restoring_path()
+    knn_config = SVRConfig.load(path)
+    print('[TEST error - loaded model]', knn_config.evaluate(dataset_part='test'))
+
+
+def search_nn():
+    from keras.losses import mean_squared_error, huber_loss
+    from models.nn.nn import NNConfig
+    # HyperParameterSearcher(KNNConfig, )
+    dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
+
+    feature_cols = [
+        settings.INPUT_FEATURE_NAMES
+    ]
+    target_cols = [
+        settings.TARGET_FEATURE_NAMES
+    ]
+    prediction_index = [6]
+    loss_function = [mean_squared_error, huber_loss]
+    n_layers = [4]
+
+    common_config = {
+        'dataset_uri': dataset_uri,
+        'feature_cols': feature_cols,
+        'target_cols': target_cols,
+        'loss_function': loss_function,
+        'n_layers': n_layers,
+        'prediction_index': prediction_index
+    }
+
+    nn_searcher = HyperParameterSearcher(NNConfig, common_config)
+
+    nn_searcher.search()
+
+    bests = nn_searcher.get_best()
+
+    print()
+    print(bests['model'].get_hyperparameters())
+    print('[TEST error - without validation]', bests['model'].evaluate(dataset_part='test'))
+
+    bests['model'].train(include_val=True)
+    print('[TEST error - with validation]', bests['model'].evaluate(dataset_part='test'))
+
+    bests['model'].save()
+
+    path = bests['model'].get_restoring_path()
+    nn_config = NNConfig.load(path)
+    print('[TEST error - loaded model]', nn_config.evaluate(dataset_part='test'))
 
 if __name__ == '__main__':
-    search_knn()
-    # search_svr()
+    #search_knn()
+    #search_svr()
+    search_nn()
 
 
