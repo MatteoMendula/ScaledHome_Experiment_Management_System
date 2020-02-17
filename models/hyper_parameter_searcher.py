@@ -185,16 +185,15 @@ def search_nn():
 
     print()
     print(bests['model'].get_hyperparameters())
-    print('[TEST error - without validation]', bests['model'].evaluate(dataset_part='test'))
-
-    bests['model'].train(include_val=True)
-    print('[TEST error - with validation]', bests['model'].evaluate(dataset_part='test'))
 
     bests['model'].save()
 
     path = bests['model'].get_restoring_path()
     nn_config = NNConfig.load(path)
-    print('[TEST error - loaded model]', nn_config.evaluate(dataset_part='test'))
+    
+    nn_config.train(include_val=True)
+    print('[TEST error - without validation]', bests['model'].evaluate(dataset_part='test'))
+    print('[TEST error - with validation]', nn_config.evaluate(dataset_part='test'))
 
 if __name__ == '__main__':
     #search_knn()

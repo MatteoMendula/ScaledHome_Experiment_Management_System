@@ -3,7 +3,6 @@ import sys
 
 from keras.models import Sequential
 from keras.layers import Dense
-from keras.wrappers.scikit_learn import KerasRegressor
 
 sys.path.append('../')
 sys.path.insert(0, "D:/Thesis draft/code/UCF_ML/models")
