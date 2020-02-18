@@ -78,10 +78,10 @@ def search_knn():
 
     n_neighbors = [3, 11, 21]
     feature_cols = [
-        settings.INPUT_FEATURE_NAMES
+        (settings.TARGET_FEATURE_NAMES.remove('TIME') if 'TIME' in settings.TARGET_FEATURE_NAMES else settings.TARGET_FEATURE_NAMES)
     ]
     target_cols = [
-        settings.TARGET_FEATURE_NAMES
+        (settings.TARGET_FEATURE_NAMES.remove('TIME') if 'TIME' in settings.TARGET_FEATURE_NAMES else settings.TARGET_FEATURE_NAMES)
     ]
     prediction_index = [6]
 
@@ -117,10 +117,10 @@ def search_svr():
     from models.svm.svm import SVRConfig
     dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
     feature_cols = [
-        settings.INPUT_FEATURE_NAMES
+        (settings.TARGET_FEATURE_NAMES.remove('TIME') if 'TIME' in settings.TARGET_FEATURE_NAMES else settings.TARGET_FEATURE_NAMES)
     ]
     target_cols = [
-        settings.TARGET_FEATURE_NAMES
+        (settings.TARGET_FEATURE_NAMES.remove('TIME') if 'TIME' in settings.TARGET_FEATURE_NAMES else settings.TARGET_FEATURE_NAMES)
     ]
     prediction_index = [6]
 
@@ -159,10 +159,10 @@ def search_nn():
     dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
 
     feature_cols = [
-        settings.INPUT_FEATURE_NAMES
+        (settings.TARGET_FEATURE_NAMES.remove('TIME') if 'TIME' in settings.TARGET_FEATURE_NAMES else settings.TARGET_FEATURE_NAMES)
     ]
     target_cols = [
-        settings.TARGET_FEATURE_NAMES
+        (settings.TARGET_FEATURE_NAMES.remove('TIME') if 'TIME' in settings.TARGET_FEATURE_NAMES else settings.TARGET_FEATURE_NAMES)
     ]
     prediction_index = [6]
     loss_function = [mean_squared_error, huber_loss]
@@ -196,8 +196,8 @@ def search_nn():
     print('[TEST error - with validation]', nn_config.evaluate(dataset_part='test'))
 
 if __name__ == '__main__':
-    #search_knn()
-    #search_svr()
+    search_knn()
+    search_svr()
     search_nn()
 
 

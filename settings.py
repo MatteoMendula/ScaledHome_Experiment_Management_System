@@ -16,6 +16,7 @@ SIMULATION_INTERVAL = 600
 
 
 INPUT_FEATURE_NAMES = [
+    "TIME",
     "OUT_T[*C]",
     "OUT_H[%]",
     "T6[*C]",
