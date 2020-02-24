@@ -83,6 +83,7 @@ def search_knn():
     target_cols = [
         (settings.TARGET_FEATURE_NAMES.remove('TIME') if 'TIME' in settings.TARGET_FEATURE_NAMES else settings.TARGET_FEATURE_NAMES)
     ]
+    distance_metrics = ['euclidean','manhattan']
     prediction_index = [6]
 
     common_config = {
@@ -90,6 +91,7 @@ def search_knn():
         'n_neighbors': n_neighbors,
         'feature_cols': feature_cols,
         'target_cols': target_cols,
+        'distance_metric': distance_metrics,
         'prediction_index': prediction_index
     }
 
@@ -197,7 +199,7 @@ def search_nn():
 
 if __name__ == '__main__':
     search_knn()
-    search_svr()
-    search_nn()
+    # search_svr()
+    # search_nn()
 
 

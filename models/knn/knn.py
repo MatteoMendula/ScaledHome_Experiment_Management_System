@@ -8,10 +8,11 @@ from models.general_model import GeneralModel
 
 
 class KNNConfig(GeneralModel):
-    def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index, n_neighbors):
+    def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index, n_neighbors, distance_metric):
         super(KNNConfig, self).__init__(dataset_uri, feature_cols, target_cols, prediction_index)
         self.n_neighbors = n_neighbors
-        self.model = KNeighborsRegressor(n_neighbors=self.n_neighbors)
+        self.distance_metric = distance_metric
+        self.model = KNeighborsRegressor(n_neighbors=self.n_neighbors, metric=self.distance_metric)
 
     def train_on(self, x, y):
         self.model.fit(x, y)
