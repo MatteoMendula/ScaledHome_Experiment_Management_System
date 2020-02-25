@@ -11,6 +11,7 @@ from sklearn.metrics import mean_squared_error
 
 #sys.path.append('../')
 sys.path.insert(0, "D:/Thesis draft/code/UCF_ML")
+from dataset_utils import handle_data
 from dataset_utils import create_lists_pairs
 
 
@@ -60,13 +61,15 @@ class GeneralModel(object):
     @abstractmethod
     def predict_on(self, x):
         pass
+    
 
     @abstractmethod
     def get_restoring_path(self):
         pass
 
     def split_dataset_train_val_test(self, dataset_uri, feature_cols, target_cols, prediction_index):
-        x, y = create_lists_pairs(dataset_uri, feature_cols, target_cols, prediction_index, as_numpy=True)
+        x, y = handle_data(dataset_uri, feature_cols, target_cols, prediction_index, as_numpy=True)
+        #x, y = create_lists_pairs(dataset_uri, feature_cols, target_cols, prediction_index, as_numpy=True)
         x_train_val, x_test, y_train_val, y_test = train_test_split(x, y, test_size=0.2, shuffle=False)
         x_train, x_val, y_train, y_val = train_test_split(
             x_train_val,

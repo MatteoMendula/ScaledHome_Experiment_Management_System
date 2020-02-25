@@ -10,9 +10,10 @@ from general_model import GeneralModel
 
 
 
-class NNConfig(GeneralModel):
-    def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index, loss_function,n_layers):
-        super(NNConfig, self).__init__(dataset_uri, feature_cols, target_cols, prediction_index)
+class DNNConfig(GeneralModel):
+    def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index, loss_function,n_layers, n_epochs):
+        super(DNNConfig, self).__init__(dataset_uri, feature_cols, target_cols, prediction_index)
+        self.n_epochs = n_epochs
         self.model = Sequential()
         self.model.add(Dense(128, input_dim=len(feature_cols), kernel_initializer='normal', activation='relu'))
         for _ in range(n_layers):
@@ -23,7 +24,7 @@ class NNConfig(GeneralModel):
         self.model.compile(loss = loss_function, optimizer='adam')
 
     def train_on(self, x, y):
-        self.model.fit(x, y, epochs=5000)
+        self.model.fit(x, y, epochs=self.n_epochs)
 
     def predict_on(self, x):
         return self.model.predict(x)
@@ -118,7 +119,7 @@ if __name__ == '__main__':
     ]
     prediction_index = 8
 
-    nn_config = NNConfig(
+    nn_config = DNNConfig(
         dataset_uri=dataset_uri,
         feature_cols=feature_cols,
         target_cols=target_cols,
