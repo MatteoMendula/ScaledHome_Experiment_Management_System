@@ -24,7 +24,7 @@ class DNNConfig(GeneralModel):
         self.model.compile(loss = loss_function, optimizer='adam')
 
     def train_on(self, x, y):
-        self.model.fit(x, y, epochs=self.n_epochs)
+        self.model.fit(x, y, epochs=self.n_epochs, batch_size=5)
 
     def predict_on(self, x):
         return self.model.predict(x)

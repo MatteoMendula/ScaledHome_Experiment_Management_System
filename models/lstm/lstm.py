@@ -1,7 +1,6 @@
 import os
 import sys
 
-import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LSTM
@@ -59,7 +58,7 @@ class LSTMConfig(GeneralModel):
         #print(x1.shape, y[self.prediction_index:,:].shape)
         #self.model.fit(x1, y[:y.shape[0]-self.prediction_index,:], epochs=100, batch_size=1, verbose=2)
         #self.model.fit(x1, y[self.prediction_index:,:], epochs=100, batch_size=1, verbose=2)
-        self.model.fit(x, y, epochs=self.n_epochs, batch_size=1, verbose=2)
+        self.model.fit(x, y, epochs=self.n_epochs, batch_size=5, verbose=2)
 
     def predict_on(self, x):
         #x1 = create_sequence_from_flat_data(x, self.prediction_index)
