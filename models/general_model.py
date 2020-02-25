@@ -84,11 +84,7 @@ class GeneralModel(object):
         return train, val, test
 
     def evaluate(self, dataset_part, flat=True):
-        if flat:
-            x, y = self.data_set_parts[dataset_part]['x'], self.data_set_parts[dataset_part]['y']
-        else:
-            x = create_sequence_from_flat_data(self.data_set_parts[dataset_part]['x'], self.prediction_index)
-            y = self.data_set_parts[dataset_part]['y'][self.prediction_index:,:]
+        x, y = self.data_set_parts[dataset_part]['x'], self.data_set_parts[dataset_part]['y']
         y_hat = self.predict(x)
         return mean_squared_error(y, y_hat, multioutput='raw_values')
 

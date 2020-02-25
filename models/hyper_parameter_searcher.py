@@ -170,8 +170,8 @@ def search_dnn():
         target_cols[0].remove('TIME')
     prediction_index = [6]
     loss_function = [mean_squared_error, huber_loss]
-    n_layers = [1]
-    n_epochs = [100]
+    n_layers = [5]
+    n_epochs = [500]
 
     common_config = {
         'dataset_uri': dataset_uri,
@@ -217,8 +217,8 @@ def search_lstm():
     prediction_index = [6]
     loss_function = [mean_squared_error, huber_loss]
     n_layers = [1]
-    n_epochs = [5]
-    n_neurons = [4]
+    n_epochs = [500]
+    n_neurons = [16]
 
     common_config = {
         'dataset_uri': dataset_uri,
@@ -251,8 +251,8 @@ def search_lstm():
     print('[TEST error - with validation]', lstm_saved.evaluate(dataset_part='test'))
 
 if __name__ == '__main__':
-    #search_knn()
-    #search_svr()
-    #search_dnn()
-    search_lstm()
+    search_knn()
+    # search_svr()
+    # search_dnn()
+    # search_lstm()
 
