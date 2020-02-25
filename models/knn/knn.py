@@ -4,8 +4,9 @@ import sys
 from sklearn.neighbors import KNeighborsRegressor
 
 sys.path.append('../')
-from models.general_model import GeneralModel
-
+sys.path.insert(0, "D:/Thesis draft/code/UCF_ML/models")
+#from models.general_model import GeneralModel
+from general_model import GeneralModel
 
 class KNNConfig(GeneralModel):
     def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index, n_neighbors, distance_metric):
@@ -78,7 +79,8 @@ if __name__ == '__main__':
         dataset_uri=dataset_uri,
         feature_cols=feature_cols,
         target_cols=target_cols,
-        prediction_index=prediction_index
+        prediction_index=prediction_index,
+        distance_metric='euclidian'
     )
 
     knn_config.train()

@@ -94,8 +94,7 @@ def handle_data(file_uri, feature_list, target_list,prediction_index=3, as_numpy
         for index in range(prediction_index):
             #temp_x = np.take(data_np[row+index], x_indexies)
             sequence_x.append(np.take(data_np[row+index], x_indexies))
-        temp_y = np.take(data_np[row+prediction_index], y_indexies)
-        dataY.append(temp_y)
+        dataY.append(np.take(data_np[row+prediction_index], y_indexies))
         if flat:
             dataX.append(sequence_x[0])
         else:
@@ -104,17 +103,27 @@ def handle_data(file_uri, feature_list, target_list,prediction_index=3, as_numpy
         sequence_x = []
     return np.array(dataX), np.array(dataY)
 
+def create_sequence_from_flat_data(features, prediction_index):
+    dataX = []
+    sequence_x = []
+    for row in range(features.shape[0]-prediction_index):
+        for index in range(prediction_index):
+            sequence_x.append(features[row+index])
+        dataX.append(sequence_x)
+        sequence_x = []
+    return np.array(dataX)
+
+
 if __name__ == '__main__':
     # cols_to_drop = ["TIME"]
     # np_array = readFileFromCSVtoNpArray(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
     # dictionary = readFileFromCSVtoDictionary(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
     file_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
     #x,y = handle_data_no_cross(file_uri, ["TIME", "OUT_T[*C]"], ["T6[*C]"], 4, as_numpy=True)
-    x,y = handle_data(file_uri, ["TIME", "OUT_T[*C]"], ["T6[*C]"], 4, as_numpy=True)
     
-    print(type(x))
-    print(y)
-
+    x,y = handle_data(file_uri, ["TIME", "OUT_T[*C]"], ["T6[*C]"], 2, as_numpy=True, flat=False)
     print(x.shape)
-    print(y.shape)
-    # print(np_array)
+
+    x1,y1 = handle_data(file_uri, ["TIME", "OUT_T[*C]"], ["T6[*C]"], 2, as_numpy=True)
+    x2 = create_sequence_from_flat_data(x1,2)
+    print(x2.shape)

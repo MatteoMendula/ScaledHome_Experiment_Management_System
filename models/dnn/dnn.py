@@ -34,7 +34,7 @@ class DNNConfig(GeneralModel):
         return os.path.join(
             dir_name,
             'saved_models',
-            f'NNConfig_k'
+            f'DNNConfig'
         )
             
 if __name__ == '__main__':

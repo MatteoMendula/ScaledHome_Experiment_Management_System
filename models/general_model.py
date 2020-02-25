@@ -13,7 +13,7 @@ from sklearn.metrics import mean_squared_error
 sys.path.insert(0, "D:/Thesis draft/code/UCF_ML")
 from dataset_utils import handle_data
 from dataset_utils import create_lists_pairs
-
+from dataset_utils import create_sequence_from_flat_data
 
 class GeneralModel(object):
     def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index):
@@ -25,7 +25,6 @@ class GeneralModel(object):
 
         self.scaler = StandardScaler()
         self.x_train, self.x_val, self.x_test = self.scale(self.x_train, self.x_val, self.x_test)
-
         self.data_set_parts = {
             'train': {
                 'x': self.x_train,
@@ -45,7 +44,6 @@ class GeneralModel(object):
         x, y = self.x_train, self.y_train
         if include_val:
             x, y = np.concatenate((x, self.x_val), axis=0), np.concatenate((y, self.y_val), axis=0)
-
         self.train_on(x, y)
 
     @abstractmethod
@@ -55,7 +53,6 @@ class GeneralModel(object):
     def predict(self, x, scale=False):
         if scale:
             x = self.scaler.transform(x)
-
         return self.predict_on(x)
 
     @abstractmethod
@@ -86,8 +83,12 @@ class GeneralModel(object):
         test = self.scaler.transform(test)
         return train, val, test
 
-    def evaluate(self, dataset_part):
-        x, y = self.data_set_parts[dataset_part]['x'], self.data_set_parts[dataset_part]['y']
+    def evaluate(self, dataset_part, flat=True):
+        if flat:
+            x, y = self.data_set_parts[dataset_part]['x'], self.data_set_parts[dataset_part]['y']
+        else:
+            x = create_sequence_from_flat_data(self.data_set_parts[dataset_part]['x'], self.prediction_index)
+            y = self.data_set_parts[dataset_part]['y'][self.prediction_index:,:]
         y_hat = self.predict(x)
         return mean_squared_error(y, y_hat, multioutput='raw_values')
 

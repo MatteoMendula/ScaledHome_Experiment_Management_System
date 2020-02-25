@@ -77,14 +77,16 @@ def search_knn():
     dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
 
     n_neighbors = [3, 11, 21]
-    feature_cols = [
-        (settings.TARGET_FEATURE_NAMES.remove('TIME') if 'TIME' in settings.TARGET_FEATURE_NAMES else settings.TARGET_FEATURE_NAMES)
-    ]
-    target_cols = [
-        (settings.TARGET_FEATURE_NAMES.remove('TIME') if 'TIME' in settings.TARGET_FEATURE_NAMES else settings.TARGET_FEATURE_NAMES)
-    ]
+    feature_cols = [settings.INPUT_FEATURE_NAMES]
+    if 'TIME' in settings.INPUT_FEATURE_NAMES:
+        feature_cols[0].remove('TIME')
+    target_cols = [settings.TARGET_FEATURE_NAMES]
+    if 'TIME' in settings.TARGET_FEATURE_NAMES:
+        target_cols[0].remove('TIME')
     distance_metrics = ['euclidean','manhattan']
     prediction_index = [6]
+
+    print('asd',feature_cols)
 
     common_config = {
         'dataset_uri': dataset_uri,
@@ -118,12 +120,12 @@ def search_knn():
 def search_svr():
     from models.svm.svm import SVRConfig
     dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
-    feature_cols = [
-        (settings.TARGET_FEATURE_NAMES.remove('TIME') if 'TIME' in settings.TARGET_FEATURE_NAMES else settings.TARGET_FEATURE_NAMES)
-    ]
-    target_cols = [
-        (settings.TARGET_FEATURE_NAMES.remove('TIME') if 'TIME' in settings.TARGET_FEATURE_NAMES else settings.TARGET_FEATURE_NAMES)
-    ]
+    feature_cols = [settings.INPUT_FEATURE_NAMES]
+    if 'TIME' in settings.INPUT_FEATURE_NAMES:
+        feature_cols[0].remove('TIME')
+    target_cols = [settings.TARGET_FEATURE_NAMES]
+    if 'TIME' in settings.TARGET_FEATURE_NAMES:
+        target_cols[0].remove('TIME')
     prediction_index = [6]
 
     common_config = {
@@ -160,12 +162,12 @@ def search_dnn():
     # HyperParameterSearcher(KNNConfig, )
     dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
 
-    feature_cols = [
-        (settings.TARGET_FEATURE_NAMES.remove('TIME') if 'TIME' in settings.TARGET_FEATURE_NAMES else settings.TARGET_FEATURE_NAMES)
-    ]
-    target_cols = [
-        (settings.TARGET_FEATURE_NAMES.remove('TIME') if 'TIME' in settings.TARGET_FEATURE_NAMES else settings.TARGET_FEATURE_NAMES)
-    ]
+    feature_cols = [settings.INPUT_FEATURE_NAMES]
+    if 'TIME' in settings.INPUT_FEATURE_NAMES:
+        feature_cols[0].remove('TIME')
+    target_cols = [settings.TARGET_FEATURE_NAMES]
+    if 'TIME' in settings.TARGET_FEATURE_NAMES:
+        target_cols[0].remove('TIME')
     prediction_index = [6]
     loss_function = [mean_squared_error, huber_loss]
     n_layers = [1]
@@ -188,6 +190,7 @@ def search_dnn():
     bests = nn_searcher.get_best()
 
     print()
+    print('BEST PARAMS')
     print(bests['model'].get_hyperparameters())
 
     bests['model'].save()
@@ -199,9 +202,57 @@ def search_dnn():
     print('[TEST error - without validation]', bests['model'].evaluate(dataset_part='test'))
     print('[TEST error - with validation]', nn_config.evaluate(dataset_part='test'))
 
+def search_lstm():
+    from keras.losses import mean_squared_error, huber_loss
+    from models.lstm.lstm import LSTMConfig
+    # HyperParameterSearcher(KNNConfig, )
+    dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
+
+    feature_cols = [settings.INPUT_FEATURE_NAMES]
+    if 'TIME' in settings.INPUT_FEATURE_NAMES:
+        feature_cols[0].remove('TIME')
+    target_cols = [settings.TARGET_FEATURE_NAMES]
+    if 'TIME' in settings.TARGET_FEATURE_NAMES:
+        target_cols[0].remove('TIME')
+    prediction_index = [6]
+    loss_function = [mean_squared_error, huber_loss]
+    n_layers = [1]
+    n_epochs = [5]
+    n_neurons = [4]
+
+    common_config = {
+        'dataset_uri': dataset_uri,
+        'feature_cols': feature_cols,
+        'target_cols': target_cols,
+        'loss_function': loss_function,
+        'n_layers': n_layers,
+        'prediction_index': prediction_index,
+        'n_epochs': n_epochs,
+        'n_neurons': n_neurons 
+    }
+
+    lstm_searcher = HyperParameterSearcher(LSTMConfig, common_config)
+
+    lstm_searcher.search()
+
+    bests = lstm_searcher.get_best()
+
+    print()
+    print('BEST PARAMS')
+    print(bests['model'].get_hyperparameters())
+
+    bests['model'].save()
+
+    path = bests['model'].get_restoring_path()
+    lstm_saved = LSTMConfig.load(path)
+    
+    lstm_saved.train(include_val=True)
+    print('[TEST error - without validation]', bests['model'].evaluate(dataset_part='test'))
+    print('[TEST error - with validation]', lstm_saved.evaluate(dataset_part='test'))
+
 if __name__ == '__main__':
     #search_knn()
     #search_svr()
-    search_dnn()
-
+    #search_dnn()
+    search_lstm()
 
