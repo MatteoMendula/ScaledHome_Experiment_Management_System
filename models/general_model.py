@@ -106,6 +106,29 @@ class GeneralModel(object):
     def load_latest(self):
         return GeneralModel.load(restore_path=self.get_restoring_path())
 
+    def change_data_into_sequences(self):
+        self.x_test = create_sequence_from_flat_data(self.x_test, self.prediction_index)
+        self.x_val = create_sequence_from_flat_data(self.x_val, self.prediction_index)
+        self.x_train = create_sequence_from_flat_data(self.x_train, self.prediction_index)
+        self.y_train = self.y_train[self.prediction_index:,:]
+        self.y_val = self.y_val[self.prediction_index:,:]
+        self.y_test = self.y_test[self.prediction_index:,:]
+
+        self.data_set_parts = {
+            'train': {
+                'x': self.x_train,
+                'y': self.y_train
+            },
+            'val': {
+                'x': self.x_val,
+                'y': self.y_val
+            },
+            'test': {
+                'x': self.x_test,
+                'y': self.y_test
+            }
+        }
+
     @staticmethod
     def load(restore_path):
         file_handler = open(restore_path, 'rb')

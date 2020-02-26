@@ -11,20 +11,22 @@ from general_model import GeneralModel
 
 
 class DNNConfig(GeneralModel):
-    def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index, loss_function,n_layers, n_epochs):
+    def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index, loss_function,n_layers, n_epochs, batch_size):
         super(DNNConfig, self).__init__(dataset_uri, feature_cols, target_cols, prediction_index)
         self.n_epochs = n_epochs
+        self.batch_size = batch_size
         self.model = Sequential()
+        self.loss_function = loss_function
         self.model.add(Dense(128, input_dim=len(feature_cols), kernel_initializer='normal', activation='relu'))
         for _ in range(n_layers):
             self.model.add(Dense(128, kernel_initializer='normal', activation='relu'))
         self.model.add(Dense(len(target_cols), kernel_initializer='normal'))
         #self.model.compile(loss='mean_squared_error', optimizer='adam')
         #self.model.compile(loss = huber_loss, optimizer='adam')
-        self.model.compile(loss = loss_function, optimizer='adam')
+        self.model.compile(loss = self.loss_function, optimizer='adam')
 
     def train_on(self, x, y):
-        self.model.fit(x, y, epochs=self.n_epochs, batch_size=5)
+        self.model.fit(x, y, epochs=self.n_epochs, batch_size=self.batch_size)
 
     def predict_on(self, x):
         return self.model.predict(x)

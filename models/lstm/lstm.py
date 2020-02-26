@@ -16,37 +16,15 @@ from general_model import GeneralModel
 
 
 class LSTMConfig(GeneralModel):
-    def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index, n_layers, n_epochs, n_neurons, loss_function):
+    def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index, n_layers, n_epochs, n_neurons, loss_function, batch_size):
         super(LSTMConfig, self).__init__(dataset_uri, feature_cols, target_cols, prediction_index)
         self.prediction_index = prediction_index
         self.n_layers = n_layers
         self.n_epochs = n_epochs 
         self.n_neurons = n_neurons 
+        self.batch_size = batch_size
         self.loss_function = loss_function
-        self.x_test = create_sequence_from_flat_data(self.x_test, self.prediction_index)
-        self.x_val = create_sequence_from_flat_data(self.x_val, self.prediction_index)
-        self.x_train = create_sequence_from_flat_data(self.x_train, self.prediction_index)
-        self.y_train = self.y_train[self.prediction_index:,:]
-        self.y_val = self.y_val[self.prediction_index:,:]
-        self.y_test = self.y_test[self.prediction_index:,:]
-
-        self.data_set_parts = {
-            'train': {
-                'x': self.x_train,
-                'y': self.y_train
-            },
-            'val': {
-                'x': self.x_val,
-                'y': self.y_val
-            },
-            'test': {
-                'x': self.x_test,
-                'y': self.y_test
-            }
-        }
-
-
-
+        self.change_data_into_sequences()
         self.model = Sequential()
         self.model.add(LSTM(self.n_neurons, input_shape=(prediction_index, len(feature_cols))))
         self.model.add(Dense(len(target_cols)))
@@ -58,7 +36,7 @@ class LSTMConfig(GeneralModel):
         #print(x1.shape, y[self.prediction_index:,:].shape)
         #self.model.fit(x1, y[:y.shape[0]-self.prediction_index,:], epochs=100, batch_size=1, verbose=2)
         #self.model.fit(x1, y[self.prediction_index:,:], epochs=100, batch_size=1, verbose=2)
-        self.model.fit(x, y, epochs=self.n_epochs, batch_size=5, verbose=2)
+        self.model.fit(x, y, epochs=self.n_epochs, batch_size=self.batch_size, verbose=2)
 
     def predict_on(self, x):
         #x1 = create_sequence_from_flat_data(x, self.prediction_index)
