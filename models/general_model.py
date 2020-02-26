@@ -14,6 +14,8 @@ sys.path.insert(0, "D:/Thesis draft/code/UCF_ML")
 from dataset_utils import handle_data
 from dataset_utils import create_lists_pairs
 from dataset_utils import create_sequence_from_flat_data
+from dataset_utils import calculate_accuracy
+
 
 class GeneralModel(object):
     def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index):
@@ -86,7 +88,9 @@ class GeneralModel(object):
     def evaluate(self, dataset_part, flat=True):
         x, y = self.data_set_parts[dataset_part]['x'], self.data_set_parts[dataset_part]['y']
         y_hat = self.predict(x)
-        return mean_squared_error(y, y_hat, multioutput='raw_values')
+        mse = mean_squared_error(y, y_hat, multioutput='raw_values')
+        accuracy = calculate_accuracy(actual_values=y, predicted_values=y_hat, tollerance=1)
+        return mse, accuracy
 
     def get_hyperparameters(self):
         attributes = inspect.getmembers(self, lambda a: not (inspect.isroutine(a)))

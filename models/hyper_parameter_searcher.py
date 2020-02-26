@@ -53,7 +53,7 @@ class HyperParameterSearcher(object):
             )
             model_config.train()
             # train_error = model_config.evaluate(dataset_part='train')
-            val_error = model_config.evaluate(dataset_part='val')
+            val_error = model_config.evaluate(dataset_part='val')[0]
             # print(config_i, val_error)
             # test_error = model_config.evaluate(dataset_part='test')
 
@@ -71,6 +71,7 @@ def search_knn():
     from models.knn.knn import KNNConfig
     # HyperParameterSearcher(KNNConfig, )
     dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
+    # dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/random_actions_every_60s_full_data.csv")
 
     n_neighbors = [3, 11, 21]
     feature_cols = [settings.INPUT_FEATURE_NAMES]
@@ -81,8 +82,6 @@ def search_knn():
         target_cols[0].remove('TIME')
     distance_metrics = ['euclidean','manhattan']
     prediction_index = [6]
-
-    print('asd',feature_cols)
 
     common_config = {
         'dataset_uri': dataset_uri,
@@ -98,24 +97,30 @@ def search_knn():
     knn_searcher.search()
 
     bests = knn_searcher.get_best()
-
-    print()
-    print(bests['model'].get_hyperparameters())
-    print('[TEST error - without validation]',bests['model'].evaluate(dataset_part='test'))
-
-    bests['model'].train(include_val=True)
-    print('[TEST error - with validation]',bests['model'].evaluate(dataset_part='test'))
-
     bests['model'].save()
-
     path = bests['model'].get_restoring_path()
-    knn_config = KNNConfig.load(path)
-    print('[TEST error - loaded model]',knn_config.evaluate(dataset_part='test'))
+    knn_loaded = KNNConfig.load(path)
+    knn_loaded.train(include_val=True)
+    
+    print('----------------------------KNN MODEL----------------------------')
+    print()
+    print('BEST PARAMS')
+    print(bests['model'].get_hyperparameters())
+    print()
+    print('[TEST error - without validation]')
+    print('row mse list:',bests['model'].evaluate(dataset_part='test')[0])
+    print('accuracy',bests['model'].evaluate(dataset_part='test')[1])
+    print()
+    print('[TEST error - with validation]')
+    print('row mse list:',knn_loaded.evaluate(dataset_part='test')[0])
+    print('accuracy',knn_loaded.evaluate(dataset_part='test')[1])
+    print()
 
 
 def search_svr():
     from models.svm.svm import SVRConfig
     dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
+    # dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/random_actions_every_60s_full_data.csv")
     feature_cols = [settings.INPUT_FEATURE_NAMES]
     if 'TIME' in settings.INPUT_FEATURE_NAMES:
         feature_cols[0].remove('TIME')
@@ -136,20 +141,24 @@ def search_svr():
     svr_searcher.search()
 
     bests = svr_searcher.get_best()
-
-    print()
-    print(bests['model'].get_hyperparameters())
-
-    print('[TEST error - without validation]', bests['model'].evaluate(dataset_part='test'))
-
-    bests['model'].train(include_val=True)
-    print('[TEST error - with validation]', bests['model'].evaluate(dataset_part='test'))
-
     bests['model'].save()
-
     path = bests['model'].get_restoring_path()
-    knn_config = SVRConfig.load(path)
-    print('[TEST error - loaded model]', knn_config.evaluate(dataset_part='test'))
+    svr_loaded = SVRConfig.load(path)
+    svr_loaded.train(include_val=True)
+
+    print('----------------------------SVR MODEL----------------------------')
+    print()
+    print('BEST PARAMS')
+    print(bests['model'].get_hyperparameters())
+    print()
+    print('[TEST error - without validation]')
+    print('row mse list:',bests['model'].evaluate(dataset_part='test')[0])
+    print('accuracy',bests['model'].evaluate(dataset_part='test')[1])
+    print()
+    print('[TEST error - with validation]')
+    print('row mse list:',svr_loaded.evaluate(dataset_part='test')[0])
+    print('accuracy',svr_loaded.evaluate(dataset_part='test')[1])
+    print()
 
 
 def search_dnn():
@@ -157,6 +166,7 @@ def search_dnn():
     from models.dnn.dnn import DNNConfig
     # HyperParameterSearcher(KNNConfig, )
     dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
+    # dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/random_actions_every_60s_full_data.csv")
 
     feature_cols = [settings.INPUT_FEATURE_NAMES]
     if 'TIME' in settings.INPUT_FEATURE_NAMES:
@@ -180,30 +190,36 @@ def search_dnn():
         'batch_size': batch_size
     }
 
-    nn_searcher = HyperParameterSearcher(DNNConfig, common_config)
+    dnn_searcher = HyperParameterSearcher(DNNConfig, common_config)
 
-    nn_searcher.search()
+    dnn_searcher.search()
 
-    bests = nn_searcher.get_best()
+    bests = dnn_searcher.get_best()
+    bests['model'].save()
+    path = bests['model'].get_restoring_path()
+    dnn_loaded = DNNConfig.load(path)
+    dnn_loaded.train(include_val=True)
 
+    print('----------------------------DNN MODEL----------------------------')
     print()
     print('BEST PARAMS')
     print(bests['model'].get_hyperparameters())
-
-    bests['model'].save()
-
-    path = bests['model'].get_restoring_path()
-    nn_config = DNNConfig.load(path)
-    
-    nn_config.train(include_val=True)
-    print('[TEST error - without validation]', bests['model'].evaluate(dataset_part='test'))
-    print('[TEST error - with validation]', nn_config.evaluate(dataset_part='test'))
+    print()
+    print('[TEST error - without validation]')
+    print('row mse list:',bests['model'].evaluate(dataset_part='test')[0])
+    print('accuracy',bests['model'].evaluate(dataset_part='test')[1])
+    print()
+    print('[TEST error - with validation]')
+    print('row mse list:',dnn_loaded.evaluate(dataset_part='test')[0])
+    print('accuracy',dnn_loaded.evaluate(dataset_part='test')[1])
+    print()
 
 def search_lstm():
     from keras.losses import mean_squared_error, huber_loss
     from models.lstm.lstm import LSTMConfig
     # HyperParameterSearcher(KNNConfig, )
     dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
+    # dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/random_actions_every_60s_full_data.csv")
 
     feature_cols = [settings.INPUT_FEATURE_NAMES]
     if 'TIME' in settings.INPUT_FEATURE_NAMES:
@@ -235,23 +251,28 @@ def search_lstm():
     lstm_searcher.search()
 
     bests = lstm_searcher.get_best()
+    bests['model'].save()
+    path = bests['model'].get_restoring_path()
+    lstm_loaded = LSTMConfig.load(path)
+    lstm_loaded.train(include_val=True)
 
+    print('----------------------------LSTM MODEL----------------------------')
     print()
     print('BEST PARAMS')
     print(bests['model'].get_hyperparameters())
-
-    bests['model'].save()
-
-    path = bests['model'].get_restoring_path()
-    lstm_saved = LSTMConfig.load(path)
-    
-    lstm_saved.train(include_val=True)
-    print('[TEST error - without validation]', bests['model'].evaluate(dataset_part='test'))
-    print('[TEST error - with validation]', lstm_saved.evaluate(dataset_part='test'))
+    print()
+    print('[TEST error - without validation]')
+    print('row mse list:',bests['model'].evaluate(dataset_part='test')[0])
+    print('accuracy',bests['model'].evaluate(dataset_part='test')[1])
+    print()
+    print('[TEST error - with validation]')
+    print('row mse list:',lstm_loaded.evaluate(dataset_part='test')[0])
+    print('accuracy',lstm_loaded.evaluate(dataset_part='test')[1])
+    print()
 
 if __name__ == '__main__':
     # search_knn()
     # search_svr()
-    search_dnn()
-    # search_lstm()
+    # search_dnn()
+    search_lstm()
 

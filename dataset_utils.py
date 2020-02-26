@@ -113,6 +113,18 @@ def create_sequence_from_flat_data(features, prediction_index):
         sequence_x = []
     return np.array(dataX)
 
+def calculate_accuracy(actual_values, predicted_values, tollerance=1):
+    if actual_values.shape == predicted_values.shape:
+        score = 0
+        for row in range(actual_values.shape[0]):
+            for f in range(actual_values.shape[1]):
+                if predicted_values[row][f] >= (actual_values[row][f] - tollerance) \
+                and predicted_values[row][f] <= (actual_values[row][f] + tollerance):
+                    score += 1
+        accuracy = score/(actual_values.shape[0]*actual_values.shape[1])
+        return accuracy
+    else:
+        return 'ERROR: Actual and predicted shapes are not matching'
 
 if __name__ == '__main__':
     # cols_to_drop = ["TIME"]
