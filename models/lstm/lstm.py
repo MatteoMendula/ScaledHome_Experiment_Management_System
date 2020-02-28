@@ -16,9 +16,10 @@ from general_model import GeneralModel
 
 
 class LSTMConfig(GeneralModel):
-    def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index, n_layers, n_epochs, n_neurons, loss_function, batch_size):
-        super(LSTMConfig, self).__init__(dataset_uri, feature_cols, target_cols, prediction_index)
+    def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index, window_size, n_layers, n_epochs, n_neurons, loss_function, batch_size):
+        super(LSTMConfig, self).__init__(dataset_uri, feature_cols, target_cols, prediction_index, window_size)
         self.prediction_index = prediction_index
+        self.window_size = window_size
         self.n_layers = n_layers
         self.n_epochs = n_epochs 
         self.n_neurons = n_neurons 
@@ -26,7 +27,7 @@ class LSTMConfig(GeneralModel):
         self.loss_function = loss_function
         self.change_data_into_sequences()
         self.model = Sequential()
-        self.model.add(LSTM(self.n_neurons, input_shape=(prediction_index, len(feature_cols))))
+        self.model.add(LSTM(self.n_neurons, input_shape=(self.window_size, len(feature_cols))))
         self.model.add(Dense(len(target_cols)))
         self.model.compile(loss=self.loss_function, optimizer='adam')
 

@@ -18,10 +18,11 @@ from dataset_utils import calculate_accuracy
 
 
 class GeneralModel(object):
-    def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index):
+    def __init__(self, dataset_uri, feature_cols, target_cols, prediction_index, window_size=None):
         self.feature_cols = feature_cols
         self.target_cols = target_cols
         self.prediction_index = prediction_index
+        self.window_size = window_size
         self.x_train, self.x_val, self.x_test, self.y_train, self.y_val, self.y_test = \
             self.split_dataset_train_val_test(dataset_uri, feature_cols, target_cols, prediction_index)
 
@@ -85,11 +86,11 @@ class GeneralModel(object):
         test = self.scaler.transform(test)
         return train, val, test
 
-    def evaluate(self, dataset_part, flat=True):
+    def evaluate(self, dataset_part, tolerance_value=1):
         x, y = self.data_set_parts[dataset_part]['x'], self.data_set_parts[dataset_part]['y']
         y_hat = self.predict(x)
         mse = mean_squared_error(y, y_hat, multioutput='raw_values')
-        accuracy = calculate_accuracy(actual_values=y, predicted_values=y_hat, tollerance=1)
+        accuracy = calculate_accuracy(actual_values=y, predicted_values=y_hat, tolerance=tolerance_value)
         return mse, accuracy
 
     def get_hyperparameters(self):
@@ -111,12 +112,16 @@ class GeneralModel(object):
         return GeneralModel.load(restore_path=self.get_restoring_path())
 
     def change_data_into_sequences(self):
-        self.x_test = create_sequence_from_flat_data(self.x_test, self.prediction_index)
-        self.x_val = create_sequence_from_flat_data(self.x_val, self.prediction_index)
-        self.x_train = create_sequence_from_flat_data(self.x_train, self.prediction_index)
-        self.y_train = self.y_train[self.prediction_index:,:]
-        self.y_val = self.y_val[self.prediction_index:,:]
-        self.y_test = self.y_test[self.prediction_index:,:]
+        # self.x_test = create_sequence_from_flat_data(self.x_test, self.prediction_index)
+        # self.x_val = create_sequence_from_flat_data(self.x_val, self.prediction_index)
+        # self.x_train = create_sequence_from_flat_data(self.x_train, self.prediction_index)
+        # self.y_train = self.y_train[self.prediction_index:,:]
+        # self.y_val = self.y_val[self.prediction_index:,:]
+        # self.y_test = self.y_test[self.prediction_index:,:]
+
+        self.x_train, self.y_train = create_sequence_from_flat_data(self.x_test, self.y_train, self.window_size, self.prediction_index)
+        self.x_val, self.y_val = create_sequence_from_flat_data(self.x_val, self.y_val, self.window_size, self.prediction_index)
+        self.x_test, self.y_test = create_sequence_from_flat_data(self.x_test, self.y_test, self.window_size, self.prediction_index)
 
         self.data_set_parts = {
             'train': {

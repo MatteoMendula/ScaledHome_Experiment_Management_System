@@ -103,6 +103,7 @@ def handle_data(file_uri, feature_list, target_list,prediction_index=3, as_numpy
         sequence_x = []
     return np.array(dataX), np.array(dataY)
 
+'''
 def create_sequence_from_flat_data(features, prediction_index):
     dataX = []
     sequence_x = []
@@ -112,14 +113,27 @@ def create_sequence_from_flat_data(features, prediction_index):
         dataX.append(sequence_x)
         sequence_x = []
     return np.array(dataX)
+'''
 
-def calculate_accuracy(actual_values, predicted_values, tollerance=1):
+def create_sequence_from_flat_data(features, targets, window_size, prediction_index):
+    dataX = []
+    dataY = []
+    sequence_x = []
+    for row in range(features.shape[0]-window_size-prediction_index):
+        for index in range(window_size):
+            sequence_x.append(features[row+index])
+        dataY.append(targets[row + window_size + prediction_index])
+        dataX.append(sequence_x)
+        sequence_x = []
+    return np.array(dataX),np.array(dataY)
+
+def calculate_accuracy(actual_values, predicted_values, tolerance=1):
     if actual_values.shape == predicted_values.shape:
         score = 0
         for row in range(actual_values.shape[0]):
             for f in range(actual_values.shape[1]):
-                if predicted_values[row][f] >= (actual_values[row][f] - tollerance) \
-                and predicted_values[row][f] <= (actual_values[row][f] + tollerance):
+                if predicted_values[row][f] >= (actual_values[row][f] - tolerance) \
+                and predicted_values[row][f] <= (actual_values[row][f] + tolerance):
                     score += 1
         accuracy = score/(actual_values.shape[0]*actual_values.shape[1])
         return accuracy

@@ -70,8 +70,8 @@ class HyperParameterSearcher(object):
 def search_knn():
     from models.knn.knn import KNNConfig
     # HyperParameterSearcher(KNNConfig, )
-    dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
-    # dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/random_actions_every_60s_full_data.csv")
+    # dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
+    dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/random_actions_every_60s_full_data.csv")
 
     n_neighbors = [3, 11, 21]
     feature_cols = [settings.INPUT_FEATURE_NAMES]
@@ -91,29 +91,26 @@ def search_knn():
         'distance_metric': distance_metrics,
         'prediction_index': prediction_index
     }
-
+    tolerance_value = 0.5
     knn_searcher = HyperParameterSearcher(KNNConfig, common_config)
-
     knn_searcher.search()
-
     bests = knn_searcher.get_best()
     bests['model'].save()
     path = bests['model'].get_restoring_path()
     knn_loaded = KNNConfig.load(path)
     knn_loaded.train(include_val=True)
-    
     print('----------------------------KNN MODEL----------------------------')
     print()
     print('BEST PARAMS')
     print(bests['model'].get_hyperparameters())
     print()
     print('[TEST error - without validation]')
-    print('row mse list:',bests['model'].evaluate(dataset_part='test')[0])
-    print('accuracy',bests['model'].evaluate(dataset_part='test')[1])
+    print('row mse list:',bests['model'].evaluate(dataset_part='test', tolerance_value=tolerance_value)[0])
+    print('accuracy',bests['model'].evaluate(dataset_part='test', tolerance_value=tolerance_value)[1])
     print()
     print('[TEST error - with validation]')
-    print('row mse list:',knn_loaded.evaluate(dataset_part='test')[0])
-    print('accuracy',knn_loaded.evaluate(dataset_part='test')[1])
+    print('row mse list:',knn_loaded.evaluate(dataset_part='test', tolerance_value=tolerance_value)[0])
+    print('accuracy',knn_loaded.evaluate(dataset_part='test',tolerance_value=tolerance_value)[1])
     print()
 
 
@@ -128,36 +125,32 @@ def search_svr():
     if 'TIME' in settings.TARGET_FEATURE_NAMES:
         target_cols[0].remove('TIME')
     prediction_index = [6]
-
+    tolerance_value = 0.5
     common_config = {
         'dataset_uri': dataset_uri,
         'feature_cols': feature_cols,
         'target_cols': target_cols,
         'prediction_index': prediction_index
     }
-
     svr_searcher = HyperParameterSearcher(SVRConfig, common_config)
-
     svr_searcher.search()
-
     bests = svr_searcher.get_best()
     bests['model'].save()
     path = bests['model'].get_restoring_path()
     svr_loaded = SVRConfig.load(path)
     svr_loaded.train(include_val=True)
-
     print('----------------------------SVR MODEL----------------------------')
     print()
     print('BEST PARAMS')
     print(bests['model'].get_hyperparameters())
     print()
     print('[TEST error - without validation]')
-    print('row mse list:',bests['model'].evaluate(dataset_part='test')[0])
-    print('accuracy',bests['model'].evaluate(dataset_part='test')[1])
+    print('row mse list:',bests['model'].evaluate(dataset_part='test', tolerance_value=tolerance_value)[0])
+    print('accuracy',bests['model'].evaluate(dataset_part='test', tolerance_value=tolerance_value)[1])
     print()
     print('[TEST error - with validation]')
-    print('row mse list:',svr_loaded.evaluate(dataset_part='test')[0])
-    print('accuracy',svr_loaded.evaluate(dataset_part='test')[1])
+    print('row mse list:',svr_loaded.evaluate(dataset_part='test', tolerance_value=tolerance_value)[0])
+    print('accuracy',svr_loaded.evaluate(dataset_part='test', tolerance_value=tolerance_value)[1])
     print()
 
 
@@ -179,6 +172,7 @@ def search_dnn():
     n_layers = [5]
     n_epochs = [500]
     batch_size = [5]
+    tolerance_value = 0.5
     common_config = {
         'dataset_uri': dataset_uri,
         'feature_cols': feature_cols,
@@ -189,37 +183,33 @@ def search_dnn():
         'n_epochs': n_epochs,
         'batch_size': batch_size
     }
-
     dnn_searcher = HyperParameterSearcher(DNNConfig, common_config)
-
     dnn_searcher.search()
-
     bests = dnn_searcher.get_best()
     bests['model'].save()
     path = bests['model'].get_restoring_path()
     dnn_loaded = DNNConfig.load(path)
     dnn_loaded.train(include_val=True)
-
     print('----------------------------DNN MODEL----------------------------')
     print()
     print('BEST PARAMS')
     print(bests['model'].get_hyperparameters())
     print()
     print('[TEST error - without validation]')
-    print('row mse list:',bests['model'].evaluate(dataset_part='test')[0])
-    print('accuracy',bests['model'].evaluate(dataset_part='test')[1])
+    print('row mse list:',bests['model'].evaluate(dataset_part='test', tolerance_value=tolerance_value)[0])
+    print('accuracy',bests['model'].evaluate(dataset_part='test', tolerance_value=tolerance_value)[1])
     print()
     print('[TEST error - with validation]')
-    print('row mse list:',dnn_loaded.evaluate(dataset_part='test')[0])
-    print('accuracy',dnn_loaded.evaluate(dataset_part='test')[1])
+    print('row mse list:',dnn_loaded.evaluate(dataset_part='test', tolerance_value=tolerance_value)[0])
+    print('accuracy',dnn_loaded.evaluate(dataset_part='test', tolerance_value=tolerance_value)[1])
     print()
 
 def search_lstm():
     from keras.losses import mean_squared_error, huber_loss
     from models.lstm.lstm import LSTMConfig
     # HyperParameterSearcher(KNNConfig, )
-    dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
-    # dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/random_actions_every_60s_full_data.csv")
+    # dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/2_5_2020_random_actions_1h_every_60s.csv")
+    dataset_uri = os.path.join(settings.PROJECT_ROOT_ADDRESS, "data/random_actions_every_60s_full_data.csv")
 
     feature_cols = [settings.INPUT_FEATURE_NAMES]
     if 'TIME' in settings.INPUT_FEATURE_NAMES:
@@ -228,12 +218,13 @@ def search_lstm():
     if 'TIME' in settings.TARGET_FEATURE_NAMES:
         target_cols[0].remove('TIME')
     prediction_index = [6]
+    window_size = [16]
     loss_function = [mean_squared_error, huber_loss]
     n_layers = [1]
     n_epochs = [500]
     n_neurons = [16]
     batch_size = [5]
-
+    tolerance_value = 0.5
     common_config = {
         'dataset_uri': dataset_uri,
         'feature_cols': feature_cols,
@@ -241,6 +232,7 @@ def search_lstm():
         'loss_function': loss_function,
         'n_layers': n_layers,
         'prediction_index': prediction_index,
+        'window_size': window_size,
         'n_epochs': n_epochs,
         'n_neurons': n_neurons,
         'batch_size': batch_size
@@ -255,24 +247,23 @@ def search_lstm():
     path = bests['model'].get_restoring_path()
     lstm_loaded = LSTMConfig.load(path)
     lstm_loaded.train(include_val=True)
-
     print('----------------------------LSTM MODEL----------------------------')
     print()
     print('BEST PARAMS')
     print(bests['model'].get_hyperparameters())
     print()
     print('[TEST error - without validation]')
-    print('row mse list:',bests['model'].evaluate(dataset_part='test')[0])
-    print('accuracy',bests['model'].evaluate(dataset_part='test')[1])
+    print('row mse list:',bests['model'].evaluate(dataset_part='test', tolerance_value=tolerance_value)[0])
+    print('accuracy',bests['model'].evaluate(dataset_part='test', tolerance_value=tolerance_value)[1])
     print()
     print('[TEST error - with validation]')
-    print('row mse list:',lstm_loaded.evaluate(dataset_part='test')[0])
-    print('accuracy',lstm_loaded.evaluate(dataset_part='test')[1])
+    print('row mse list:',lstm_loaded.evaluate(dataset_part='test', tolerance_value=tolerance_value)[0])
+    print('accuracy',lstm_loaded.evaluate(dataset_part='test', tolerance_value=tolerance_value)[1])
     print()
 
 if __name__ == '__main__':
-    # search_knn()
+    search_knn()
     # search_svr()
     # search_dnn()
-    search_lstm()
+    # search_lstm()
 
