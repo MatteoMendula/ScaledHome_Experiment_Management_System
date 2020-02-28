@@ -220,7 +220,7 @@ def search_lstm():
     prediction_index = [6]
     window_size = [16]
     loss_function = [mean_squared_error, huber_loss]
-    n_layers = [1]
+    n_layers = [2]
     n_epochs = [500]
     n_neurons = [16]
     batch_size = [5]
@@ -262,8 +262,8 @@ def search_lstm():
     print()
 
 if __name__ == '__main__':
-    search_knn()
+    # search_knn()
     # search_svr()
     # search_dnn()
-    # search_lstm()
+    search_lstm()
 

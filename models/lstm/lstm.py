@@ -29,10 +29,10 @@ class LSTMConfig(GeneralModel):
         self.model = Sequential()
 
         if self.n_layers == 1:
-            self.model.add(LSTM(self.n_neurons, input_shape=(prediction_index, len(feature_cols))))
+            self.model.add(LSTM(self.n_neurons, input_shape=(self.window_size, len(feature_cols))))
         else:
             self.model.add(
-                LSTM(self.n_neurons, input_shape=(prediction_index, len(feature_cols)), return_sequences=True)
+                LSTM(self.n_neurons, input_shape=(self.window_size, len(feature_cols)), return_sequences=True)
             )
 
             for i in range(1, self.n_layers - 1):
