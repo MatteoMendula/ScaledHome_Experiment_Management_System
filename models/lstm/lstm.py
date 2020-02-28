@@ -26,7 +26,18 @@ class LSTMConfig(GeneralModel):
         self.loss_function = loss_function
         self.change_data_into_sequences()
         self.model = Sequential()
-        self.model.add(LSTM(self.n_neurons, input_shape=(prediction_index, len(feature_cols))))
+
+        if self.n_layers == 1:
+            self.model.add(LSTM(self.n_neurons, input_shape=(prediction_index, len(feature_cols))))
+        else:
+            self.model.add(
+                LSTM(self.n_neurons, input_shape=(prediction_index, len(feature_cols)), return_sequences=True)
+            )
+
+            for i in range(1, self.n_layers - 1):
+                self.model.add(LSTM(self.n_neurons, return_sequences=True))
+
+            self.model.add(LSTM(self.n_neurons))
         self.model.add(Dense(len(target_cols)))
         self.model.compile(loss=self.loss_function, optimizer='adam')
 
