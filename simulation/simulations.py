@@ -59,8 +59,8 @@ def simulateFromList(temperatures_list, interval):
             seconds += 1    
         index += 1
 
-def simulateRealDataTemperatures(n_frames):
-    dataset_address = os.path.join(settings.PROJECT_ROOT_ADDRESS, 'data/mi_meteo_2001.csv')
+def simulateRealDataTemperatures(n_frames, data_file_uri):
+    dataset_address = os.path.join(settings.PROJECT_ROOT_ADDRESS, data_file_uri)
 
     steps_per_day = 8
     intervals = 24 // steps_per_day
