@@ -26,11 +26,12 @@ We implemented four different regressors:
 The results acheived are shown in the table below:
 
 | | 300 records| 4000 records| 
-| -- | :------------: | :------------: |
+| :--: | :------------: | :------------: |
 | **KNN**| 70% and 71%(val.)*| 70% and 71%(val.)* |
 | **SVR**| 42% and 47%(val.)*| 22% and 19%(val.)*|
 | **DNN**| 79% and 63%(val.)*| 89% and 88%(val.)*|
 | **LSTM**| 64% and 27%(val.)*| 87% and 85%(val.)*|
+
 (*) score achieved by training on training set and validation set merged
 
 For each model implemented, we considered both MSE and accuracy.
