@@ -12,7 +12,7 @@ In particular, thanks to the help offered by [Siavash Khodadadeh](https://github
 The graphs below show as a final result a considerably accurate mapping of real-world temperatures in Milan into the ScaledHome temperature range.
 Also, we evaluate the improvement achieved by applying hysteresis techniques at this time. 
 
-![Image of Milan]([https://github.com/MatteoMendula/ScaledHome_Experiment_Management_System](https://github.com/MatteoMendula/ScaledHome_Experiment_Management_System/blob/master/imgs/milan.png?raw=true))
+![Image of Milan](https://github.com/MatteoMendula/ScaledHome_Experiment_Management_System/blob/master/imgs/milan.png?raw=true)
 
 ## Predictive Machine Learning Models
 
