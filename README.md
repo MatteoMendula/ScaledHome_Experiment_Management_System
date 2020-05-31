@@ -12,7 +12,7 @@ In particular, thanks to the help offered by [Siavash Khodadadeh](https://github
 The graphs below show as a final result a considerably accurate mapping of real-world temperatures in Milan into the ScaledHome temperature range.
 Also, we evaluate the improvement achieved by applying hysteresis techniques at this time. 
 
-![Image of Milan](https://github.com/MatteoMendula/ScaledHome_Experiment_Management_System/blob/master/imgs/milan.png?raw=true)
+![Image of Milan](https://github.com/MatteoMendula/ScaledHome_Experiment_Management_System/blob/master/imgs/milan.png?raw=true))
 
 ## Predictive Machine Learning Models
 
@@ -26,7 +26,7 @@ We implemented four different regressors:
 The results acheived are shown in the table below:
 
 | | 300 records| 4000 records| 
-| :---: | :---: | :---: |
+| -- | :------------: | :------------: |
 | **KNN**| 70% and 71%(val.)*| 70% and 71%(val.)* |
 | **SVR**| 42% and 47%(val.)*| 22% and 19%(val.)*|
 | **DNN**| 79% and 63%(val.)*| 89% and 88%(val.)*|
@@ -36,8 +36,3 @@ The results acheived are shown in the table below:
 For each model implemented, we considered both MSE and accuracy.
 Regarding the latter, we defined a tolerance range to validate the predicted value, increasing a score variable every time our prediction was inside the tolerance range. 
 Since temperature is the main feature we predicted, and the accuracy of the available sensors is 1$^{\circ}$C, we set the tolerance range for each actual target value y<sub>i</sub> to [y<sub>i-1</sub>, y<sub>i+1</sub>]. 
-
-
-Download the data from 
-[here](https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/9Z6CKW/6C3C1Y&version=1.2)
-and put it into data directory.
