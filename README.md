@@ -1,6 +1,6 @@
 # ScaledHome Experiment Management System
 
-This repo illustrates the work done in collaboration with the team leaded by prof. Damla Turgut and prof. Lotzi Boloni during my period abroad at the University of Central Florida (Orlando, FL).
+This repo illustrates the work done in collaboration with the team leaded by prof. Damla Turgut and prof. Lotzi Boloni during my internship at the University of Central Florida (Orlando, FL).
 
 In particular, thanks to the help offered by [Siavash Khodadadeh](https://github.com/siavash-khodadadeh) this part of the project consists of : 
  - a pre-processing module of the data collected from the [ScaledHome Control System](https://github.com/MatteoMendula/ScaledHome_Control_System) 
