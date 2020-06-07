@@ -7,7 +7,7 @@ In particular, thanks to the help offered by [Siavash Khodadadeh](https://github
  - a simulation support model to load new scenarios and run different real-world simulations
  - the implementation of a set of predictive ML models meant to forecast the temperature variation over the simulation period
  - an agent to select among the possibile actions, those that minimize the energy consumption usage
- - 
+
 ## Simulate real-world scenarios
 The graphs below show as a final result a considerably accurate mapping of real-world temperatures in Milan into the ScaledHome temperature range.
 Also, we evaluate the improvement achieved by applying hysteresis techniques at this time. 
